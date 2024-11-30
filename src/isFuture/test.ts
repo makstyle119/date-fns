@@ -1,37 +1,27 @@
-/* eslint-env mocha */
-
-import assert from "assert";
-import { afterEach, beforeEach, describe, it } from "vitest";
-import sinon from "sinon";
+import { describe, expect, it } from "vitest";
+import { fakeDate } from "../_lib/test/index.js";
 import { isFuture } from "./index.js";
 
 describe("isFuture", () => {
-  let clock: sinon.SinonFakeTimers;
-  beforeEach(() => {
-    clock = sinon.useFakeTimers(new Date(2014, 8 /* Sep */, 25).getTime());
-  });
-
-  afterEach(() => {
-    clock.restore();
-  });
+  fakeDate(new Date(2014, 8 /* Sep */, 25));
 
   it("returns true if the given date is in the future", () => {
     const result = isFuture(new Date(2014, 9 /* Oct */, 31));
-    assert(result === true);
+    expect(result).toBe(true);
   });
 
   it("returns false if the given date is in the past", () => {
     const result = isFuture(new Date(2014, 8 /* Sep */, 1));
-    assert(result === false);
+    expect(result).toBe(false);
   });
 
   it("returns false if the given date is now", () => {
     const result = isFuture(new Date(2014, 8 /* Sep */, 25));
-    assert(result === false);
+    expect(result).toBe(false);
   });
 
   it("accepts a timestamp", () => {
     const result = isFuture(new Date(2014, 9 /* Oct */, 31).getTime());
-    assert(result === true);
+    expect(result).toBe(true);
   });
 });

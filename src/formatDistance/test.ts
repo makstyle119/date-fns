@@ -1,7 +1,5 @@
-/* eslint-env mocha */
-
-import assert from "assert";
-import { describe, it } from "vitest";
+import { TZDate, tz } from "@date-fns/tz";
+import { describe, expect, it } from "vitest";
 import type { FormatDistanceFn } from "../locale/types.js";
 import { formatDistance } from "./index.js";
 
@@ -14,7 +12,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 32, 3),
           { includeSeconds: true },
         );
-        assert(result === "less than 5 seconds");
+        expect(result).toBe("less than 5 seconds");
       });
 
       it("less than 10 seconds", () => {
@@ -23,7 +21,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 32, 7),
           { includeSeconds: true },
         );
-        assert(result === "less than 10 seconds");
+        expect(result).toBe("less than 10 seconds");
       });
 
       it("less than 20 seconds", () => {
@@ -32,7 +30,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 32, 15),
           { includeSeconds: true },
         );
-        assert(result === "less than 20 seconds");
+        expect(result).toBe("less than 20 seconds");
       });
 
       it("half a minute", () => {
@@ -41,7 +39,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 32, 25),
           { includeSeconds: true },
         );
-        assert(result === "half a minute");
+        expect(result).toBe("half a minute");
       });
 
       it("less than a minute", () => {
@@ -50,7 +48,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 32, 45),
           { includeSeconds: true },
         );
-        assert(result === "less than a minute");
+        expect(result).toBe("less than a minute");
       });
 
       it("1 minute", () => {
@@ -59,7 +57,7 @@ describe("formatDistance", () => {
           new Date(1986, 3, 4, 10, 33, 0),
           { includeSeconds: true },
         );
-        assert(result === "1 minute");
+        expect(result).toBe("1 minute");
       });
     });
   });
@@ -70,7 +68,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 4, 10, 32, 20),
       );
-      assert(result === "less than a minute");
+      expect(result).toBe("less than a minute");
     });
 
     it("1 minute", () => {
@@ -78,7 +76,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 4, 10, 32, 50),
       );
-      assert(result === "1 minute");
+      expect(result).toBe("1 minute");
     });
 
     it("n minutes", () => {
@@ -86,7 +84,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 4, 10, 34, 50),
       );
-      assert(result === "3 minutes");
+      expect(result).toBe("3 minutes");
     });
   });
 
@@ -96,7 +94,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 4, 11, 32, 0),
       );
-      assert(result === "about 1 hour");
+      expect(result).toBe("about 1 hour");
     });
 
     it("about n hours", () => {
@@ -104,7 +102,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 4, 13, 32, 0),
       );
-      assert(result === "about 3 hours");
+      expect(result).toBe("about 3 hours");
     });
   });
 
@@ -114,7 +112,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 5, 10, 32, 0),
       );
-      assert(result === "1 day");
+      expect(result).toBe("1 day");
     });
 
     it("n days", () => {
@@ -122,7 +120,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 3, 7, 10, 32, 0),
       );
-      assert(result === "3 days");
+      expect(result).toBe("3 days");
     });
   });
 
@@ -132,7 +130,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 4, 4, 10, 32, 0),
       );
-      assert(result === "about 1 month");
+      expect(result).toBe("about 1 month");
     });
 
     it("n months", () => {
@@ -140,7 +138,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1986, 6, 4, 10, 32, 0),
       );
-      assert(result === "3 months");
+      expect(result).toBe("3 months");
     });
   });
 
@@ -150,7 +148,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1987, 3, 4, 10, 32, 0),
       );
-      assert(result === "about 1 year");
+      expect(result).toBe("about 1 year");
     });
 
     it("over 1 year", () => {
@@ -158,7 +156,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1987, 9, 4, 10, 32, 0),
       );
-      assert(result === "over 1 year");
+      expect(result).toBe("over 1 year");
     });
 
     it("almost n years", () => {
@@ -166,7 +164,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1989, 2, 4, 10, 32, 0),
       );
-      assert(result === "almost 3 years");
+      expect(result).toBe("almost 3 years");
     });
 
     it("about n years", () => {
@@ -174,7 +172,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1989, 3, 4, 10, 32, 0),
       );
-      assert(result === "about 3 years");
+      expect(result).toBe("about 3 years");
     });
 
     it("over n years", () => {
@@ -182,7 +180,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         new Date(1989, 9, 4, 10, 32, 0),
       );
-      assert(result === "over 3 years");
+      expect(result).toBe("over 3 years");
     });
   });
 
@@ -191,7 +189,7 @@ describe("formatDistance", () => {
       new Date(1986, 3, 4, 10, 32, 0).getTime(),
       new Date(1986, 3, 4, 11, 32, 0).getTime(),
     );
-    assert(result === "about 1 hour");
+    expect(result).toBe("about 1 hour");
   });
 
   describe("when the addSuffix option is true", () => {
@@ -201,7 +199,7 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 25),
         { includeSeconds: true, addSuffix: true },
       );
-      assert(result === "half a minute ago");
+      expect(result).toBe("half a minute ago");
     });
 
     it("adds a future suffix", () => {
@@ -210,17 +208,17 @@ describe("formatDistance", () => {
         new Date(1986, 3, 4, 10, 32, 0),
         { addSuffix: true },
       );
-      assert(result === "in about 1 hour");
+      expect(result).toBe("in about 1 hour");
     });
   });
 
   describe("custom locale", () => {
     it("can be passed to the function", () => {
       const localizeDistance: FormatDistanceFn = (token, count, options) => {
-        assert(token === "lessThanXSeconds");
-        assert(count === 5);
-        assert(options!.addSuffix === true);
-        assert(options!.comparison! > 0);
+        expect(token).toBe("lessThanXSeconds");
+        expect(count).toBe(5);
+        expect(options!.addSuffix).toBe(true);
+        expect(options!.comparison!).toBeGreaterThan(0);
         return "It works!";
       };
 
@@ -238,28 +236,56 @@ describe("formatDistance", () => {
         },
       );
 
-      assert(result === "It works!");
+      expect(result).toBe("It works!");
     });
   });
 
   it("throws RangeError if the first date is `Invalid Date`", () => {
-    assert.throws(
+    expect(
       formatDistance.bind(null, new Date(NaN), new Date(1986, 3, 7, 10, 32, 0)),
-      RangeError,
-    );
+    ).toThrow(RangeError);
   });
 
   it("throws RangeError if the second date is `Invalid Date`", () => {
-    assert.throws(
+    expect(
       formatDistance.bind(null, new Date(1986, 3, 4, 10, 32, 0), new Date(NaN)),
+    ).toThrow(RangeError);
+  });
+
+  it("throws RangeError if the both dates are `Invalid Date`", () => {
+    expect(formatDistance.bind(null, new Date(NaN), new Date(NaN))).toThrow(
       RangeError,
     );
   });
 
-  it("throws RangeError if the both dates are `Invalid Date`", () => {
-    assert.throws(
-      formatDistance.bind(null, new Date(NaN), new Date(NaN)),
-      RangeError,
-    );
+  it("normalizes the dates", () => {
+    const dateLeft = new TZDate(2023, 5, 1, "Asia/Singapore");
+    const dateRight = new TZDate(2023, 11, 1, "America/New_York");
+    expect(formatDistance(dateLeft, dateRight)).toEqual("6 months");
+    expect(formatDistance(dateRight, dateLeft)).toBe("6 months");
+  });
+
+  it("allows dates to be of different types", () => {
+    function _test<DateType1 extends Date, DateType2 extends Date>(
+      start: DateType1 | number | string,
+      end: DateType2 | number | string,
+    ) {
+      formatDistance(start, end);
+    }
+  });
+
+  describe("context", () => {
+    it("allows to specify the context", () => {
+      expect(
+        formatDistance("2024-04-10T07:00:00Z", "2024-04-12T07:00:00Z", {
+          in: tz("America/Los_Angeles"),
+        }),
+      ).toEqual("2 days");
+      expect(
+        formatDistance("2024-04-10T07:00:00Z", "2024-04-12T07:00:00Z", {
+          in: tz("Asia/Singapore"),
+        }),
+      ).toEqual("2 days");
+    });
   });
 });

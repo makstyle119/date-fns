@@ -1,7 +1,6 @@
-/* eslint-env mocha */
-
-import assert from "assert";
-import { describe, it } from "vitest";
+import { TZDate, tz } from "@date-fns/tz";
+import { describe, expect, it } from "vitest";
+import type { ContextOptions, DateArg } from "../types.js";
 import { differenceInBusinessDays } from "./index.js";
 
 describe("differenceInBusinessDays", () => {
@@ -10,7 +9,7 @@ describe("differenceInBusinessDays", () => {
       new Date(2014, 6 /* Jul */, 18),
       new Date(2014, 0 /* Jan */, 10),
     );
-    assert(result === 135);
+    expect(result).toBe(135);
   });
 
   it("can handle long ranges", () => {
@@ -18,7 +17,7 @@ describe("differenceInBusinessDays", () => {
       new Date(15000, 0 /* Jan */, 1),
       new Date(2014, 0 /* Jan */, 1),
     );
-    assert(result === 3387885);
+    expect(result).toBe(3387885);
   });
 
   it("the same except given first date falls on a weekend", () => {
@@ -26,7 +25,7 @@ describe("differenceInBusinessDays", () => {
       new Date(2019, 6 /* Jul */, 20),
       new Date(2019, 6 /* Jul */, 18),
     );
-    assert(result === 2);
+    expect(result).toBe(2);
   });
 
   it("the same except given second date falls on a weekend", () => {
@@ -34,7 +33,7 @@ describe("differenceInBusinessDays", () => {
       new Date(2019, 6 /* Jul */, 23),
       new Date(2019, 6 /* Jul */, 20),
     );
-    assert(result === 1);
+    expect(result).toBe(1);
   });
 
   it("the same except both given dates fall on a weekend", () => {
@@ -42,7 +41,7 @@ describe("differenceInBusinessDays", () => {
       new Date(2019, 6 /* Jul */, 28),
       new Date(2019, 6 /* Jul */, 20),
     );
-    assert(result === 5);
+    expect(result).toBe(5);
   });
 
   it("returns a negative number if the time value of the first date is smaller", () => {
@@ -50,7 +49,7 @@ describe("differenceInBusinessDays", () => {
       new Date(2014, 0 /* Jan */, 10),
       new Date(2014, 6 /* Jul */, 20),
     );
-    assert(result === -135);
+    expect(result).toBe(-135);
   });
 
   it("accepts timestamps", () => {
@@ -58,7 +57,52 @@ describe("differenceInBusinessDays", () => {
       new Date(2014, 6, 18).getTime(),
       new Date(2014, 0, 10).getTime(),
     );
-    assert(result === 135);
+    expect(result).toBe(135);
+  });
+
+  it("normalizes the dates", () => {
+    const dateLeft = new TZDate(2025, 0, 1, "Asia/Singapore");
+    const dateRight = new TZDate(2024, 0, 1, "America/New_York");
+    expect(differenceInBusinessDays(dateLeft, dateRight)).toBe(262);
+    expect(differenceInBusinessDays(dateRight, dateLeft)).toBe(-261);
+  });
+
+  it("allows dates to be of different types", () => {
+    function _test<DateType1 extends Date, DateType2 extends Date>(
+      arg1: DateType1 | number | string,
+      arg2: DateType2 | number | string,
+    ) {
+      differenceInBusinessDays(arg1, arg2);
+    }
+  });
+
+  describe("context", () => {
+    it("allows to specify the context", () => {
+      expect(
+        differenceInBusinessDays(
+          "2024-04-10T02:00:00Z",
+          "2024-04-07T02:00:00Z",
+          { in: tz("America/New_York") },
+        ),
+      ).toBe(1);
+      expect(
+        differenceInBusinessDays(
+          "2024-04-10T02:00:00Z",
+          "2024-04-07T02:00:00Z",
+          { in: tz("Asia/Singapore") },
+        ),
+      ).toBe(2);
+    });
+
+    it("doesn't enforce argument and context to be of the same type", () => {
+      function _test<DateType extends Date, ContextDate extends Date>(
+        arg1: DateArg<DateType>,
+        arg2: DateArg<DateType>,
+        options?: ContextOptions<ContextDate>,
+      ) {
+        differenceInBusinessDays(arg1, arg2, { in: options?.in });
+      }
+    });
   });
 
   describe("edge cases", () => {
@@ -67,7 +111,7 @@ describe("differenceInBusinessDays", () => {
         new Date(2014, 8 /* Sep */, 5, 0, 0),
         new Date(2014, 8 /* Sep */, 4, 23, 59),
       );
-      assert(result === 1);
+      expect(result).toBe(1);
     });
 
     it("the same for the swapped dates", () => {
@@ -75,7 +119,7 @@ describe("differenceInBusinessDays", () => {
         new Date(2014, 8 /* Sep */, 4, 23, 59),
         new Date(2014, 8 /* Sep */, 5, 0, 0),
       );
-      assert(result === -1);
+      expect(result).toBe(-1);
     });
 
     it("the time values of the given dates are the same", () => {
@@ -83,7 +127,7 @@ describe("differenceInBusinessDays", () => {
         new Date(2014, 8 /* Sep */, 5, 0, 0),
         new Date(2014, 8 /* Sep */, 4, 0, 0),
       );
-      assert(result === 1);
+      expect(result).toBe(1);
     });
 
     it("the given dates are the same", () => {
@@ -91,7 +135,7 @@ describe("differenceInBusinessDays", () => {
         new Date(2014, 8 /* Sep */, 5, 0, 0),
         new Date(2014, 8 /* Sep */, 5, 0, 0),
       );
-      assert(result === 0);
+      expect(result).toBe(0);
     });
 
     it("does not return -0 when the given dates are the same", () => {
@@ -105,7 +149,7 @@ describe("differenceInBusinessDays", () => {
       );
 
       const resultIsNegative = isNegativeZero(result);
-      assert(resultIsNegative === false);
+      expect(resultIsNegative).toBe(false);
     });
 
     it("returns NaN if the first date is `Invalid Date`", () => {
@@ -113,7 +157,7 @@ describe("differenceInBusinessDays", () => {
         new Date(NaN),
         new Date(2017, 0 /* Jan */, 1),
       );
-      assert(isNaN(result));
+      expect(isNaN(result)).toBe(true);
     });
 
     it("returns NaN if the second date is `Invalid Date`", () => {
@@ -121,12 +165,12 @@ describe("differenceInBusinessDays", () => {
         new Date(2017, 0 /* Jan */, 1),
         new Date(NaN),
       );
-      assert(isNaN(result));
+      expect(isNaN(result)).toBe(true);
     });
 
     it("returns NaN if the both dates are `Invalid Date`", () => {
       const result = differenceInBusinessDays(new Date(NaN), new Date(NaN));
-      assert(isNaN(result));
+      expect(isNaN(result)).toBe(true);
     });
   });
 });
